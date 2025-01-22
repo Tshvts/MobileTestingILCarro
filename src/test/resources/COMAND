@@ -1,0 +1,7 @@
+./gradlew clean smoketests (IDE)
+emulator @Nex2 (ADB call)
+adb devices (ADB)
+adb devices -l (ADB)
+emulator -avd Nex2(ADB open)
+PS C:\Users\tdshe> adb kill-server
+PS C:\Users\tdshe> adb start-server
