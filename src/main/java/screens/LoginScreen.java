@@ -22,10 +22,18 @@ public class LoginScreen extends BaseScreen
     @FindBy(id = "com.telran.ilcarro:id/loginBtn")
     AndroidElement btnYalla;
 
+    @FindBy(id = "android:id/message")
+    AndroidElement errorMessage;
+
     public void typeFormLogin(UserDTO user)
     {
         inputEmail.sendKeys(user.getUsername());
         inputPassword.sendKeys(user.getPassword());
         clickWait(btnYalla,5);
+    }
+
+    public boolean errorMessageIsExisted(String text)
+    {
+        return textElementIsPresent(errorMessage, text, 5);
     }
 }
