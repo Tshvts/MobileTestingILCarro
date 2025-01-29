@@ -21,9 +21,24 @@ public class SearchScreen extends BaseScreen
     @FindBy(xpath = "//*[@text = 'Login']")
     AndroidElement btnLogin;
 
+
+    @FindBy(xpath = "//*[@text='Login success!']")
+    AndroidElement popUpMessage;
+
     public void goToRegistrationPage()
     {
         clickWait(btnMoreOptions,5);
         clickWait(btnRegistration,5);
+    }
+
+    public void goToLoginPage()
+    {
+        clickWait(btnMoreOptions,5);
+        clickWait(btnLogin,5);
+    }
+
+    public boolean popUpMessageIsExisted(String text)
+    {
+        return textElementIsPresent(popUpMessage, text, 5);
     }
 }
