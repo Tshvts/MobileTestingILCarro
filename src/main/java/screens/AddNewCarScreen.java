@@ -73,5 +73,4 @@ public class AddNewCarScreen extends BaseScreen
     {
         btnAddCar.click();
     }
-
 }

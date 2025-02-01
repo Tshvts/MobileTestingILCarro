@@ -3,7 +3,7 @@ package ui_mobile;
 import config.AppiumConfig;
 import dto.SearchDto;
 import dto.UserDTO;
-import io.appium.java_client.AppiumDriver;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import screens.*;
@@ -14,8 +14,8 @@ public class SearchCarTests extends AppiumConfig
     private String email = "test132@gmail.com";
     private String password = "Ngfg*135";
     SearchScreen searchScreen;
-    MyCarsScreen myCarsScreen;
-    AddNewCarScreen addNewCarScreen;
+    ErrorScreen errorScreen;
+    SearchResultScreen searchResultScreen;
 
     @BeforeMethod
     public void preConditions()
@@ -31,17 +31,55 @@ public class SearchCarTests extends AppiumConfig
                                 .password(password)
                                 .build()
                 );
+        searchScreen = new SearchScreen(driver);
+        searchResultScreen = new SearchResultScreen(driver);
+        errorScreen = new ErrorScreen(driver);
+
     }
 
     @Test
-    public void searchCarPositive()
+    public void searchCarWOCalendarPositive()
     {
         SearchDto searchDto = SearchDto.builder()
-                .city("Haifa")
+                .city("Rehovot")
                 .startDate("12/03/25")
                 .endDate("31/03/25")
                 .build();
-        searchScreen = new SearchScreen(driver);
+        searchScreen.searchCarWOCalendar(searchDto);
+        searchScreen.clickBtnYalla();
+        Assert.assertTrue(searchResultScreen.validateMovingToSearchResult("Search result",5));
+    }
+
+    @Test
+    public void searchCarWithCalendarPositive()
+    {
+        SearchDto searchDto = SearchDto.builder()
+                .city("Rehovot")
+                .startDate("")
+                .endDate("")
+                .build();
         searchScreen.searchCarWithCalendar(searchDto);
+        searchScreen.clickBtnYalla();
+        Assert.assertTrue(searchResultScreen.validateMovingToSearchResult("Search result",5));
+    }
+
+    @Test
+    public void searchCarNegative_emptyCity()
+    {
+        searchScreen.clickBtnYalla();
+        Assert.assertTrue(errorScreen.errorMessageIsExisted("City can't be empty"));
+    }
+
+    @Test
+    public void searchCarNegative_noNameDates()//a strange error message, so I didn't know how to call
+    {
+        SearchDto searchDto = SearchDto.builder()
+                .city("Rehovot")
+                .startDate("")
+                .endDate("")
+                .build();
+        searchScreen.searchWithInputFrom(searchDto);
+        searchScreen.clickBtnYalla();
+        Assert.assertTrue(errorScreen.errorMessageIsExisted("To date can't be before from date"));
     }
 }

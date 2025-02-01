@@ -36,8 +36,20 @@ public class SearchScreen extends BaseScreen
     @FindBy(id = "com.telran.ilcarro:id/editFrom")
     AndroidElement inputFrom;
 
+    @FindBy(id = "android:id/next")
+    AndroidElement btnNextMonth;
+
+    @FindBy(xpath = "//*[@text='1']")
+    AndroidElement iconOfTheFirstDay;
+
+    @FindBy(id = "android:id/button1")
+    AndroidElement btnOk;
+
     @FindBy(id = "com.telran.ilcarro:id/editTo")
     AndroidElement inputTo;
+
+    @FindBy(xpath = "//*[@text='30']")
+    AndroidElement iconOfTheLastDay;
 
     @FindBy(id = "com.telran.ilcarro:id/searchBtn")
     AndroidElement btnSearchYalla;
@@ -65,15 +77,34 @@ public class SearchScreen extends BaseScreen
         return textElementIsPresent(popUpMessage, text, 5);
     }
 
+    public void searchCarWOCalendar(SearchDto searchDto)
+    {
+        inputLocation.sendKeys(searchDto.getCity());
+    }
+
     public void searchCarWithCalendar(SearchDto searchDto)
     {
         inputLocation.sendKeys(searchDto.getCity());
-//        inputFrom.click();
-//        inputFrom.sendKeys(searchDto.getStartDate());
-//        inputFrom.sendKeys(Keys.ENTER);
-//        inputTo.click();
-//        inputTo.sendKeys(searchDto.getEndDate());
-//        inputTo.sendKeys(Keys.ENTER);
+        clickWait(inputFrom,5);
+        clickWait(iconOfTheFirstDay,5);
+        btnOk.click();
+        clickWait(inputTo,5);
+        clickWait(btnNextMonth,5);
+        clickWait(iconOfTheLastDay,5);
+        btnOk.click();
+    }
+
+    public void clickBtnYalla()
+    {
         clickWait(btnSearchYalla,5);
+    }
+
+    public void searchWithInputFrom(SearchDto searchDto)
+    {
+        inputLocation.sendKeys(searchDto.getCity());
+        clickWait(inputFrom,5);
+        clickWait(btnNextMonth,5);
+        clickWait(iconOfTheFirstDay,5);
+        btnOk.click();
     }
 }

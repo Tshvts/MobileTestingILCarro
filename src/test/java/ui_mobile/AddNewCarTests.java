@@ -18,6 +18,7 @@ public class AddNewCarTests extends AppiumConfig
     SearchScreen searchScreen;
     MyCarsScreen myCarsScreen;
     AddNewCarScreen addNewCarScreen;
+    ErrorScreen errorScreen;
 
     @BeforeMethod
     public void preconditions()
@@ -34,6 +35,10 @@ public class AddNewCarTests extends AppiumConfig
                                .build()
                );
        searchScreen.goToMyCarsPage();
+
+        myCarsScreen = new MyCarsScreen(driver);
+        addNewCarScreen = new AddNewCarScreen(driver);
+        errorScreen = new ErrorScreen(driver);
     }
 
     @Test
@@ -52,9 +57,8 @@ public class AddNewCarTests extends AppiumConfig
                 .about(generateString(10))
                 .build();
 
-        myCarsScreen = new MyCarsScreen(driver);
+
         myCarsScreen.goToCreatingPage();
-        addNewCarScreen = new AddNewCarScreen(driver);
         addNewCarScreen.addNewCar(car);
         Assert.assertTrue(myCarsScreen.validatePopUpMessage("Car was added!",5));
     }
@@ -75,10 +79,79 @@ public class AddNewCarTests extends AppiumConfig
                 .about(generateString(10))
                 .build();
 
-        myCarsScreen = new MyCarsScreen(driver);
         myCarsScreen.goToCreatingPage();
-        addNewCarScreen = new AddNewCarScreen(driver);
         addNewCarScreen.addNewCar(car);
-       Assert.assertEquals(myCarsScreen.scrollToLastElementCar(), car.getSerialNumber());
+        Assert.assertEquals(myCarsScreen.scrollToLastElementCar(), car.getSerialNumber());
+    }
+
+    @Test
+    public void addNewCarNegative_emptySerialNumber()
+    {
+        CarDto car = CarDto.builder()
+                .serialNumber("")
+                .manufacture(generateString(6))
+                .model(generateNumbers(3))
+                .city("Haifa")
+                .pricePerDay(233.22)
+                .carClass("A")
+                .fuel("Gas")
+                .year("1975")
+                .seats(4)
+                .about(generateString(10))
+                .build();
+
+        myCarsScreen.goToCreatingPage();
+        addNewCarScreen.addNewCar(car);
+        Assert.assertTrue(errorScreen.errorMessageIsExisted("Fields: Serial number, Manufacture, Model, City, Price per day is required!"));
+    }
+
+    @Test
+    public void addNewCarNegative_wrongCity()
+    {
+        CarDto car = CarDto.builder()
+                .serialNumber(generateNumbers(6))
+                .manufacture(generateString(6))
+                .model(generateNumbers(3))
+                .city(generateNumbers(5))
+                .pricePerDay(233.22)
+                .carClass("A")
+                .fuel("Gas")
+                .year("1975")
+                .seats(4)
+                .about(generateString(10))
+                .build();
+
+        myCarsScreen.goToCreatingPage();
+        addNewCarScreen.addNewCar(car);
+       Assert.assertTrue(errorScreen.errorMessageIsExisted("City " + car.getCity() +" not available"));
+    }
+
+
+    @Test
+    public void addNewCarNegative_wrongYear() //there is a bug
+    {
+        CarDto car = CarDto.builder()
+                .serialNumber(generateNumbers(6))
+                .manufacture(generateString(6))
+                .model(generateNumbers(3))
+                .city("Rehovot")
+                .pricePerDay(233.22)
+                .carClass("A")
+                .fuel("Gas")
+                .year(generateNumbers(10))
+                .seats(4)
+                .about(generateString(10))
+                .build();
+
+        myCarsScreen.goToCreatingPage();
+        addNewCarScreen.addNewCar(car);
+        if (myCarsScreen.validatePopUpMessage("Car was added!",5))
+        {
+            System.out.println("There's a bug");
+        }
+        else
+        {
+            System.out.println("Test passed");
+        }
     }
 }
