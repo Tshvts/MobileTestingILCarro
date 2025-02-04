@@ -31,7 +31,6 @@ public class SearchCarTests extends AppiumConfig
                                 .password(password)
                                 .build()
                 );
-        searchScreen = new SearchScreen(driver);
         searchResultScreen = new SearchResultScreen(driver);
         errorScreen = new ErrorScreen(driver);
 
@@ -60,6 +59,14 @@ public class SearchCarTests extends AppiumConfig
                 .build();
         searchScreen.searchCarWithCalendar(searchDto);
         searchScreen.clickBtnYalla();
+        Assert.assertTrue(searchResultScreen.validateMovingToSearchResult("Search result",5));
+    }
+
+    @Test
+    public void searchCarPositiveWithCalendar_Lesson25()
+    {
+        searchScreen.findCarWithCalendar("Rehovot",
+                "10 March 2026", "12 April 2027");
         Assert.assertTrue(searchResultScreen.validateMovingToSearchResult("Search result",5));
     }
 
