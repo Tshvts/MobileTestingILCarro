@@ -1,12 +1,18 @@
 package ui_mobile;
 
 import config.AppiumConfig;
+import config.CarController;
 import dto.CarDto;
+import dto.CarsDto;
 import dto.UserDTO;
+import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 import screens.*;
+
+import java.util.Arrays;
 
 import static helper.RandomHelper.*;
 
@@ -82,6 +88,42 @@ public class AddNewCarTests extends AppiumConfig
         myCarsScreen.goToCreatingPage();
         addNewCarScreen.addNewCar(car);
         Assert.assertEquals(myCarsScreen.scrollToLastElementCar(), car.getSerialNumber());
+    }
+
+    @Test
+    public void addNewCarPositive_ValidateRestApi()
+    {
+        CarDto car = CarDto.builder()
+                .serialNumber(generateNumbers(6))
+                .manufacture(generateString(6))
+                .model(generateNumbers(3))
+                .city("Haifa")
+                .pricePerDay(233.22)
+                .carClass("A")
+                .fuel("Gas")
+                .year("1975")
+                .seats(4)
+                .about(generateString(10))
+                .build();
+
+        myCarsScreen.goToCreatingPage();
+        addNewCarScreen.addNewCar(car);
+        CarController carController = new CarController();
+        carController.login();
+        Response response = carController.getUserCars(carController.tokenDto.getAccessToken());
+        CarDto[] arrayCars = response.body().as(CarsDto.class).getCars();
+        int index = 0;
+        for(int i = 0; i<arrayCars.length; i++)
+        {
+            if(arrayCars[i].equals(car))
+            {
+                System.out.println("car api == car");
+                index = i;
+                break;
+            }
+        }
+
+        Assert.assertEquals(car, arrayCars[index]);
     }
 
     @Test
