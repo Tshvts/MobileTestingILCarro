@@ -18,4 +18,13 @@ public class AuthenticationController implements BaseApi
                 .post(BASE_URL + url)
                 .thenReturn();
     }
+
+    public Response requestRegLogin_500(UserDTO user, String url)
+    {
+       return given()
+                .body(user)
+                .when()
+                .post(BASE_URL + url)
+                .thenReturn();
+    }
 }
